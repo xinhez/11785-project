@@ -3,6 +3,8 @@
 ### [Second Language Acuisition Modeling](docs/SLAM.pdf)
 Given a history of token-level errors made by the learner in the learning language (L2), accurately predict the errors they will make in the future. 
 
+The competition has 15 submissions in total.
+
 ---
 
 ### Documents	
@@ -15,3 +17,4 @@ Given a history of token-level errors made by the learner in the learning langua
 
 ---
 
+### [Related Works](docs/publications.md)
