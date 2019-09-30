@@ -6,3 +6,6 @@ Fall 2019 11-785 Intro to Deep Learning Course Project
 
 ### Datasets
 [Duolingo AI](https://ai.duolingo.com)
+
+### Paper
+[Second Language Acuisition Modeling](docs/SLAM.pdf)
