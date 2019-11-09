@@ -29,3 +29,35 @@ In order to run the baseline model and evaluate your predictions, perform the fo
                    --key path/to/dev_or_test/labels.dev.key
     ```
     to print a variety of metrics for the baseline predictions to the screen.
+
+## Example Command
+* es_en
+    ```bash
+    python3 officialBaseline.py --train ../data/es_en/es_en.slam.20190204.train --test ../data/es_en/es_en.slam.20190204.test --pred ./es_en_predictions.pred
+    python3 eval.py --pred ./es_en_predictions.pred --key ../data/es_en/es_en.slam.20190204.test.key
+    ```
+* fr_en
+    ```bash
+    python3 officialBaseline.py --train ../data/fr_en/fr_en.slam.20190204.train --test ../data/fr_en/fr_en.slam.20190204.test --pred ./fr_en_predictions.pred
+    python3 eval.py --pred ./fr_en_predictions.pred --key ../data/fr_en/fr_en.slam.20190204.test.key
+    ```
+* en_es
+    ```bash
+    python3 officialBaseline.py --train ../data/en_es/en_es.slam.20190204.train --test ../data/en_es/en_es.slam.20190204.test --pred ./en_es_predictions.pred
+    python3 eval.py --pred ./en_es_predictions.pred --key ../data/en_es/en_es.slam.20190204.test.key
+    ```
+
+## Official Baseline Model
+This baseline model loads the training and test data that you pass in via --train and --test arguments for a particular
+track (course), storing the resulting data in InstanceData objects, one for each instance. The code then creates the
+features we'll use for logistic regression, storing the resulting LogisticRegressionInstance objects, then uses those to
+train a regularized logistic model with SGD, and then makes predictions for the test set and dumps them to a CSV file
+specified with the --pred argument, in a format appropriate to be read in and graded by the [eval.py](eval.py) script.
+
+We elect to use two different classes, InstanceData and LogisticRegressionInstance, to delineate the boundary between
+the two purposes of this code; the first being to act as a user-friendly interface to the data, and the second being to
+train and run a baseline model as an example. Competitors may feel free to use InstanceData in their own code, but
+should consider replacing the LogisticRegressionInstance with a class more appropriate for the model they construct.
+
+This code is written to be compatible with both Python 2 or 3, at the expense of dependency on the future library. This
+code does not depend on any other Python libraries besides future.
