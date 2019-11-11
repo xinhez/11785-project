@@ -4,7 +4,6 @@ import os
 import time
 import torch
 import torch.nn as nn
-import torch.optim as optim
 import numpy as np
 
 from future.builtins import range
@@ -13,7 +12,7 @@ from future.utils import iteritems
 from datautils import load_data
 from models.MLP import get_dataloader, Model
 
-epochs = 1
+epochs = 10
 
 def main():
     """
@@ -38,66 +37,26 @@ def main():
     # Assert that the train course matches the test course
     assert os.path.basename(args.train)[:5] == os.path.basename(args.test)[:5]
 
+    start_time = time.time()
     training_data, training_labels = load_data(args.train)
     test_data = load_data(args.test)
+    end_time = time.time()
+    print('Data Loaded\t Time Taken %0.2fm' % ((end_time - start_time)/60))
 
     ####################################################################################
     # Here is the delineation between loading the data and running the baseline model. #
     # Replace the code between this and the next comment block with your own.          #
     ####################################################################################
 
-    torch.manual_seed(23)
-    np.random.seed(23)
-    device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
-
+    torch.manual_seed(0)
+    np.random.seed(0)
+    
     model = Model()
-    optimizer = optim.Adam(model.parameters())
-    criterion = nn.L1Loss()
-
-    # ============================== Train ==============================
-    model.train()
-    model.to(device)
-
-    running_loss = 0.0
-    dataloader = get_dataloader(training_data, training_labels)
+    train_loader = get_dataloader(training_data, training_labels)
+    model.train(train_loader, epochs)
     
-    start_time = time.time()
-    for (feats, labels) in dataloader:
-        optimizer.zero_grad() 
-        feats = feats.to(device, non_blocking=True).float()
-        labels = labels.to(device, non_blocking=True).float()
-
-        outputs = model(feats)
-        loss = criterion(outputs, labels)
-        running_loss += loss.item()
-        loss.backward()
-        optimizer.step()
-    
-    end_time = time.time()
-    
-    running_loss /= len(dataloader)
-    print('Training Time: %0.2f min' % ((end_time - start_time)/60))
-    print('\tTraining Loss: ', running_loss)
-    
-    # ============================== Inference ==============================
-    model.eval()
-    model.to(device)
-
-    predictions = dict()
-    dataloader = get_dataloader(test_data, np.zeros(len(test_data)))
-    
-    start_time = time.time()
-    with torch.no_grad():
-        for (feats, ids) in dataloader:
-            optimizer.zero_grad() 
-            feats = feats.to(device, non_blocking=True).float()
-            outputs = model(feats)
-            for i in range(len(feats)):
-                predictions[ids[i]] = outputs[i].item()
-    
-    end_time = time.time()
-    
-    print('Inference Time: %0.2f min' % ((end_time - start_time)/60))
+    test_loader = get_dataloader(test_data, np.zeros(len(test_data)))
+    predictions = model.predict_test_set(test_loader)
 
     ####################################################################################
     # This ends the baseline model code; now we just write predictions.                #

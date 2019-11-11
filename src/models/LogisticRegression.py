@@ -8,7 +8,7 @@ _DEFAULT_SIGMA = 20.0
 # Eta is the learning rate/step size for SGD. Larger means larger step size.
 _DEFAULT_ETA = 0.1
 
-class ModelDataLoader(namedtuple('Instance', ['features', 'label', 'name'])):
+class LogisticRegressionInstance(namedtuple('Instance', ['features', 'label', 'name'])):
     """
     A named tuple for packaging together the instance features, label, and name.
     """
@@ -19,7 +19,22 @@ class ModelDataLoader(namedtuple('Instance', ['features', 'label', 'name'])):
             label = float(label)
         if not isinstance(features, dict):
             raise TypeError('LogisticRegressionInstance features must be a dict.')
-        return super(ModelDataLoader, cls).__new__(cls, features, label, name)
+        return super(LogisticRegressionInstance, cls).__new__(cls, features, label, name)
+
+def get_dataloader(feats, labels):
+    try:
+        dataloader =  [LogisticRegressionInstance(
+            features=instance_data.to_features(),
+            label=labels[instance_data.instance_id],
+            name=instance_data.instance_id
+        ) for instance_data in feats]
+    except:
+        dataloader = [LogisticRegressionInstance(
+            features=instance_data.to_features(),
+            label=None,
+            name=instance_data.instance_id
+        ) for instance_data in feats]
+    return dataloader
 
 class Model(object):
     """
