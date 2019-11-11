@@ -28,9 +28,9 @@ def get_dataloader(feats, labels):
     dataloader = DataLoader(dataset, shuffle=True, batch_size=512, num_workers=8, pin_memory=True)
     return dataloader
 
-class MLP(nn.Module):
+class Perceptron(nn.Module):
     def __init__(self):
-        super(MLP, self).__init__()
+        super(Perceptron, self).__init__()
         layers = []
         layers.append(nn.Linear(1, 2))
         layers.append(nn.Softmax())
@@ -41,7 +41,7 @@ class MLP(nn.Module):
 
 class Model:
     def __init__(self):
-        self.model = MLP()
+        self.model = Perceptron()
         self.optimizer = optim.Adam(self.model.parameters())
         self.criterion = nn.L1Loss()
 

@@ -1,7 +1,20 @@
 # 11785-project	
 
-### [Second Language Acuisition Modeling](docs/SLAM.pdf)
+### Second Language Acuisition Modeling ([Read the Duolingo overview paper](docs/papers/SLAM.pdf))
+
 Given a history of token-level errors made by the learner in the learning language (L2), accurately predict the errors they will make in the future. 
+
+--- 
+### Results in this project
+
+|       | es_en    |            |       |       |
+| ---   | ---      | ---        | ---   | ---   |
+| model | accuracy | avglogloss | auroc | F1    |
+| [Random](src/models/Random.py) | 0.500 | 0.998 | 0.500 | 0.243 |
+| [Logistic Regression](src/models/LogisticRegression.py) | 0.844 | 0.386 | 0.745 | 0.183 |
+| [Perceptron](src/models/Perceptron.py) | 0.839 | 4.712 | 0.538 | 0.000 |
+
+---
 
 ## Example Command
 ### Install this project
@@ -16,6 +29,7 @@ tar -xvzf data_es_en.tar.gz --directory es_en
 mkdir fr_en
 tar -xvzf data_fr_en.tar.gz --directory fr_en
 ```
+---
 
 ### Run the script
 #### es_en
@@ -36,21 +50,16 @@ cd src
 python3 main.py --train ../data/en_es/en_es.slam.20190204.train --test ../data/en_es/en_es.slam.20190204.test --pred ./en_es_predictions.pred
 python3 ../baseline/eval.py --pred ./en_es_predictions.pred --key ../data/en_es/en_es.slam.20190204.test.key
 ```
+---
 
 ### Class Documents	
 [Project Proposal Guidelines](docs/Project_Proposal_Guidelines.pdf)	
 
+---
 
-### Datasets	
-[Duolingo AI](https://ai.duolingo.com)	
-
-
-### [Related Works](docs/publications.md)
-
-### Results
-#### es_en
-| model               | accuracy | avglogloss | auroc | F1    |
-| ---                 | ---      | ---        | ---   | ---   |
-| Random              | 0.500    | 0.998      | 0.500 | 0.243 |
-| Logistic Regression | 0.844    | 0.386      | 0.745 | 0.183 |
-| Perceptron          | 0.839    | 4.712      | 0.538 | 0.000 |
+### Related Works
+|      | en_es |     | es_en |     | fr_en |     |      |
+| ---  | ---   | --- | ---   | --- | ---   | --- | ---  |
+| Team | auc   | f1  | auc   | f1  | auc   |  f1 | rank |
+| [SanaLabs](docs/papers/osika.slam18.pdf) | 0.861 | 0.561 | 0.838 | 0.530 | 0.857 | 0.573 | 1.0 |
+| [SingSound](docs/papers/xu.slam18.pdf) | 0.861 | 0.561 | 0.835 | 0.524 | 0.854 | 0.569 | 1.7 |
