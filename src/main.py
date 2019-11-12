@@ -2,17 +2,20 @@ import argparse
 from io import open
 import os
 import time
-import torch
-import torch.nn as nn
 import numpy as np
 
 from future.builtins import range
 from future.utils import iteritems
 
-from datautils import load_data
-from models.MLP import get_dataloader, Model
+# from datautils import load_data, Lang
+# from models.LogisticRegression import get_dataloader, Model
 
-epochs = 10
+# from datautils import load_data, Lang
+# from models.Perceptron import get_dataloader, Model
+
+from sequenceDatautils import load_data, Lang
+from models.Seq2seq import get_dataloader, Model
+
 
 def main():
     """
@@ -24,45 +27,53 @@ def main():
 
     parser = argparse.ArgumentParser(description='Duolingo shared task baseline model')
     parser.add_argument('--train', help='Training file name', required=True)
+    parser.add_argument('--dev', help='Dev file name, to make predictions on', required=True)
     parser.add_argument('--test', help='Test file name, to make predictions on', required=True)
-    parser.add_argument('--pred', help='Output file name for predictions, defaults to test_name.pred')
+    parser.add_argument('--devpred', help='Output file name for predictions, defaults to test_name.pred')
+    parser.add_argument('--testpred', help='Output file name for predictions, defaults to test_name.pred')
     args = parser.parse_args()
 
-    if not args.pred:
-        args.pred = args.test + '.pred'
-
     assert os.path.isfile(args.train)
+    assert os.path.isfile(args.dev)
     assert os.path.isfile(args.test)
 
     # Assert that the train course matches the test course
-    assert os.path.basename(args.train)[:5] == os.path.basename(args.test)[:5]
+    assert os.path.basename(args.train)[:5] == os.path.basename(args.test)[:5] == os.path.basename(args.dev)[:5]
 
+    # ============================== Hyper Parameter ==============================
+    dbg = False
+    epochs = 1 if dbg else 10
+    lang = Lang()
+
+    # ============================== Data Loading ==============================
+
+    print('Begin Data Loading')
     start_time = time.time()
-    training_data, training_labels = load_data(args.train)
-    test_data = load_data(args.test)
+    training_data, training_labels = load_data(args.train, lang, dbg)
+    dev_data = load_data(args.dev, lang)
+    test_data = load_data(args.test, lang)
     end_time = time.time()
     print('Data Loaded\t Time Taken %0.2fm' % ((end_time - start_time)/60))
 
-    ####################################################################################
-    # Here is the delineation between loading the data and running the baseline model. #
-    # Replace the code between this and the next comment block with your own.          #
-    ####################################################################################
+    # ============================== Training ==============================
+    model = Model(lang)
 
-    torch.manual_seed(0)
-    np.random.seed(0)
-    
-    model = Model()
-    train_loader = get_dataloader(training_data, training_labels)
+    print('Begin Training')
+    train_loader = get_dataloader(training_data, training_labels, lang)
     model.train(train_loader, epochs)
+
+    # ============================== Inference ==============================
+    print('Begin Inference-Dev')
+    dev_loader = get_dataloader(dev_data, np.zeros(len(dev_data)), lang)
+    predictions = model.predict_for_set(dev_loader)
+    with open(args.devpred, 'wt') as f:
+        for instance_id, prediction in iteritems(predictions):
+            f.write(instance_id + ' ' + str(prediction) + '\n')
     
-    test_loader = get_dataloader(test_data, np.zeros(len(test_data)))
-    predictions = model.predict_test_set(test_loader)
-
-    ####################################################################################
-    # This ends the baseline model code; now we just write predictions.                #
-    ####################################################################################
-
-    with open(args.pred, 'wt') as f:
+    print('Begin Inference-Test')
+    test_loader = get_dataloader(test_data, np.zeros(len(test_data)), lang)
+    predictions = model.predict_for_set(test_loader)
+    with open(args.testpred, 'wt') as f:
         for instance_id, prediction in iteritems(predictions):
             f.write(instance_id + ' ' + str(prediction) + '\n')
 

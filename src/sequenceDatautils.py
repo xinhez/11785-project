@@ -33,6 +33,7 @@ def load_data(filename, lang, dbg=False):
 
     # 'data' stores a list of 'InstanceData's as values.
     data = []
+    data_instance = []
 
     # If this is training data, then 'labels' is a dict that contains instance_ids as keys and labels as values.
     training = False
@@ -43,8 +44,8 @@ def load_data(filename, lang, dbg=False):
         labels = dict()
 
     num_exercises = 0
-    print('Loading instances...')
     instance_properties = dict()
+    dbg_count = 0
 
     with open(filename, 'rt') as f:
         for line in f:
@@ -53,10 +54,12 @@ def load_data(filename, lang, dbg=False):
             # If there's nothing in the line, then we're done with the exercise. Print if needed, otherwise continue
             if len(line) == 0:
                 num_exercises += 1
-                if num_exercises % 100000 == 0:
-                    print('Loaded ' + str(len(data)) + ' instances across ' + str(num_exercises) + ' exercises...')
-                    if dbg:
+                data.append(data_instance)
+                if dbg:
+                    dbg_count += 1
+                    if dbg_count > 1000:
                         break
+                data_instance = []
                 instance_properties = dict()
 
             # If the line starts with #, then we're beginning a new exercise
@@ -106,10 +109,7 @@ def load_data(filename, lang, dbg=False):
                 if training:
                     label = float(line[6])
                     labels[instance_properties['instance_id']] = label
-                data.append(InstanceData(instance_properties=instance_properties))
-
-        print('Done loading ' + str(len(data)) + ' instances across ' + str(num_exercises) +
-              ' exercises.\n')
+                data_instance.append(InstanceData(instance_properties=instance_properties))
 
     if training:
         return data, labels

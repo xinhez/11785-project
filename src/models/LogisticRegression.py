@@ -41,7 +41,7 @@ class Model(object):
     An L2-regularized logistic regression object trained using stochastic gradient descent.
     """
 
-    def __init__(self, sigma=_DEFAULT_SIGMA, eta=_DEFAULT_ETA):
+    def __init__(self, lang, sigma=_DEFAULT_SIGMA, eta=_DEFAULT_ETA):
         super(Model, self).__init__()
         self.sigma = sigma  # L2 prior variance
         self.eta = eta  # initial learning rate
@@ -84,5 +84,5 @@ class Model(object):
                 self.training_update(instance)
         print('\n')
 
-    def predict_test_set(self, test_set):
+    def predict_for_set(self, test_set):
         return {instance.name: self.predict_instance(instance) for instance in test_set}
