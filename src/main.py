@@ -14,7 +14,7 @@ from future.utils import iteritems
 # from models.Perceptron import get_dataloader, Model
 
 from sequenceDatautils import load_data, Lang
-from models.Seq2seq import get_dataloader, Model
+from models.RNN import get_dataloader, Model
 
 
 def main():
@@ -41,7 +41,7 @@ def main():
     assert os.path.basename(args.train)[:5] == os.path.basename(args.test)[:5] == os.path.basename(args.dev)[:5]
 
     # ============================== Hyper Parameter ==============================
-    dbg = False
+    dbg = True
     epochs = 1 if dbg else 10
     lang = Lang()
 

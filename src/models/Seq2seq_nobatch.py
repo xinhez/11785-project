@@ -30,7 +30,7 @@ class SLAMDataset(Dataset):
 
 def get_dataloader(feats, labels, lang):
     dataset = SLAMDataset(feats, labels, lang)
-    dataloader = DataLoader(dataset, shuffle=True, batch_size=32, num_workers=8, pin_memory=True, collate_fn=_collate)
+    dataloader = DataLoader(dataset, shuffle=True, batch_size=1, num_workers=8, pin_memory=True, collate_fn=_collate)
     return dataloader
 
 class Encoder(nn.Module):
@@ -38,18 +38,17 @@ class Encoder(nn.Module):
         super(Encoder, self).__init__()
         self.hidden_size = hidden_size
         self.embedding = nn.Embedding(input_size, hidden_size)
-        self.gru = nn.GRU(hidden_size, hidden_size, batch_first=True)
+        self.gru = nn.GRU(hidden_size, hidden_size)
 
-    def forward(self, inputs, hidden, input_lengths):
-        inputs = self.embedding(inputs)
-        X = nn.utils.rnn.pack_padded_sequence(inputs, input_lengths, batch_first=True, enforce_sorted=False)
-        output, state = self.gru(X, hidden)
-        output, _ = nn.utils.rnn.pad_packed_sequence(output, batch_first=True)
-        return output, state
+    def forward(self, input, hidden):
+        embedded = self.embedding(input).view(1, 1, -1)
+        output = embedded
+        output, hidden = self.gru(output, hidden)
+        return output, hidden
 
-    def initHidden(self, batch_size):
+    def initHidden(self):
         device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
-        return torch.zeros(1, batch_size, self.hidden_size, device=device)
+        return torch.zeros(1, 1, self.hidden_size, device=device)
 
 class Decoder(nn.Module):
     def __init__(self, hidden_size, output_size):
@@ -88,18 +87,32 @@ class Model:
         for epoch in range(epochs):
             print('\tTraining epoch %d/%d' % (epoch+1, epochs), end='\t')
             start_time = time.time()
-            for (trainX, trainY) in dataloader:
+            for (data, labels) in dataloader:
                 self.encoder_optimizer.zero_grad() 
                 self.decoder_optimizer.zero_grad()
 
-                # X shape [max_length, batch_size]
-                X_lens = torch.LongTensor([len(seq) for seq in trainX]).to(device)
-                X = nn.utils.rnn.pad_sequence(trainX).to(device)
-                del trainX
+                encoder_hidden = self.encoder.initHidden()
 
-                encoder_output, encoder_state = self.encoder(X, X_lens)
-                ... = self.decoder(encoder_output, encoder_state)
+                for word in data[0]:
+                    word = word.to(device)
+                    encoder_output, encoder_hidden = self.encoder(word, encoder_hidden)
 
+                decoder_input = torch.tensor([[[.5, .5]]], device=device)
+                decoder_hidden = encoder_hidden
+                
+                outputs = []
+                for _ in data[0]:
+                    decoder_output, decoder_hidden = self.decoder(decoder_input, decoder_hidden)
+                    outputs.append(decoder_output.view(-1))
+                    decoder_input = decoder_output.detach()
+
+                labels = torch.tensor(labels[0], device=device).long()
+                outputs = torch.stack(outputs)
+                loss = self.criterion(outputs, labels)
+                running_loss += loss.item()
+                loss.backward()
+                self.encoder_optimizer.step()
+                self.decoder_optimizer.step()
             
             end_time = time.time()
             
