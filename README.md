@@ -13,6 +13,7 @@ Given a history of token-level errors made by the learner in the learning langua
 | [Random](src/models/Random.py) | 0.500 | 0.998 | 0.500 | 0.243 |
 | [Logistic Regression](src/models/LogisticRegression.py) | 0.844 | 0.386 | 0.745 | 0.183 |
 | [Perceptron](src/models/Perceptron.py) | 0.839 | 0.437 | 0.608 | 0.000 |
+| [Seq2seq](src/models/Seq2seq.py) | 0.839 | 0.427 | 0.631 | 0.047 |
 
 ---
 
