@@ -1,11 +1,18 @@
-# 11785-project	
-
-### Second Language Acuisition Modeling ([Read the Duolingo overview paper](docs/papers/SLAM.pdf))
+# 11785-project	Second Language Acquisition Modeling 
+[Read the Duolingo overview paper](docs/papers/SLAM.pdf)
 
 Given a history of token-level errors made by the learner in the learning language (L2), accurately predict the errors they will make in the future. 
 
 --- 
-### Results in this project
+
+### Group Members:
+- [Xinhe Zhang](xinhez@andrew.cmu.edu)
+- [Xinyue Zhang](xzhang4@andrew.cmu.edu)
+- [Xueqian Zhang](xueqianz@andrew.cmu.edu)
+
+--- 
+
+### Our Results
 
 |       | es_en    |            |       |       |
 | ---   | ---      | ---        | ---   | ---   |
@@ -13,7 +20,7 @@ Given a history of token-level errors made by the learner in the learning langua
 | [Random](src/models/Random.py) | 0.500 | 0.998 | 0.500 | 0.243 |
 | [Logistic Regression](src/models/LogisticRegression.py) | 0.844 | 0.386 | 0.745 | 0.183 |
 | [Perceptron](src/models/Perceptron.py) | 0.839 | 0.437 | 0.608 | 0.000 |
-| [Seq2seq](src/models/Seq2seq.py) | 0.839 | 0.427 | 0.631 | 0.047 |
+| [Seq2seq](src/models/Seq2seq.py) | 0.857 | 0.427 | 0.667 | 0.015 |
 
 ---
 
@@ -57,7 +64,8 @@ python3 ../baseline/eval.py --pred ./en_es_test_predictions.pred --key ../data/e
 ---
 
 ### Class Documents	
-[Project Proposal Guidelines](docs/Project_Proposal_Guidelines.pdf)	
+- [Project Proposal Guidelines](docs/Project_Proposal_Guidelines.pdf)	
+- [Read Our Midterm Report](docs/submissions/midterm.pdf)
 
 ---
 
