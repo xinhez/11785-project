@@ -76,23 +76,24 @@ def load_data(filename, lang, dbg=False, use_all_features=False):
                 
             # If the line starts with #, then we're beginning a new exercise
             elif line[0] == '#':
-                if 'prompt' in line:
-                    exercise['prompt'] = line.split(':')[1]
-                else:
-                    list_of_exercise_parameters = line[2:].split()
-                    for exercise_parameter in list_of_exercise_parameters:
-                        [key, value] = exercise_parameter.split(':')
-                        if key == 'countries':
-                            value = value.split('|')
-                        elif key == 'days':
-                            value = float(value)
-                        elif key == 'time':
-                            if value == 'null':
-                                value = None
-                            else:
-                                assert '.' not in value
-                                value = int(value)
-                        exercise[key] = value
+                if use_all_features:
+                    if 'prompt' in line:
+                        exercise['prompt'] = line.split(':')[1]
+                    else:
+                        list_of_exercise_parameters = line[2:].split()
+                        for exercise_parameter in list_of_exercise_parameters:
+                            [key, value] = exercise_parameter.split(':')
+                            if key == 'countries':
+                                value = value.split('|')
+                            elif key == 'days':
+                                value = float(value)
+                            elif key == 'time':
+                                if value == 'null':
+                                    value = None
+                                else:
+                                    assert '.' not in value
+                                    value = int(value)
+                            exercise[key] = value
 
             # Otherwise we're parsing a new Instance for the current exercise
             else:

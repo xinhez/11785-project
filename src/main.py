@@ -7,8 +7,8 @@ import numpy as np
 from future.builtins import range
 from future.utils import iteritems
 
-from datautils.datautils import load_data, Lang
-from models.LogisticRegression import get_dataloader, Model
+# from datautils.datautils import load_data, Lang
+# from models.LogisticRegression import get_dataloader, Model
 
 # from datautils.datautils import load_data, Lang
 # from models.Perceptron import get_dataloader, Model
@@ -16,8 +16,8 @@ from models.LogisticRegression import get_dataloader, Model
 # from datautils.sequenceDatautils import load_data, Lang
 # from models.Seq2seq import get_dataloader, Model
 
-# from datautils.attentionDatautils import load_data, Lang
-# from models.Attention import get_dataloader, Model
+from datautils.attentionDatautils import load_data, Lang
+from models.Attention import get_dataloader, Model
 
 
 def main():
