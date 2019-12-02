@@ -43,23 +43,32 @@ tar -xvzf data_fr_en.tar.gz --directory fr_en
 #### es_en
 ```bash
 cd src
-python3 main.py --train ../data/es_en/es_en.slam.20190204.train --dev ../data/es_en/es_en.slam.20190204.dev --test ../data/es_en/es_en.slam.20190204.test --devpred ./es_en_dev_predictions.pred --testpred ./es_en_test_predictions.pred
-python3 ../baseline/eval.py --pred ./es_en_dev_predictions.pred --key ../data/es_en/es_en.slam.20190204.dev.key
-python3 ../baseline/eval.py --pred ./es_en_test_predictions.pred --key ../data/es_en/es_en.slam.20190204.test.key
+
+python3 main.py --language es_en
+
+python3 ../baseline/eval.py --pred ./outputs/es_en_dev_predictions.pred --key ../data/es_en/es_en.slam.20190204.dev.key
+
+python3 ../baseline/eval.py --pred ./outputs/es_en_test_predictions.pred --key ../data/es_en/es_en.slam.20190204.test.key
 ```
 #### fr_en
 ```bash
 cd src
-python3 main.py --train ../data/fr_en/fr_en.slam.20190204.train --dev ../data/fr_en/fr_en.slam.20190204.dev --test ../data/fr_en/fr_en.slam.20190204.test --devpred ./fr_en_dev_predictions.pred --testpred ./fr_en_test_predictions.pred
-python3 ../baseline/eval.py --pred ./fr_en_dev_predictions.pred --key ../data/fr_en/fr_en.slam.20190204.dev.key
-python3 ../baseline/eval.py --pred ./fr_en_test_predictions.pred --key ../data/fr_en/fr_en.slam.20190204.test.key
+
+python3 main.py --language fr_en
+
+python3 ../baseline/eval.py --pred ./outputs/fr_en_dev_predictions.pred --key ../data/fr_en/fr_en.slam.20190204.dev.key
+
+python3 ../baseline/eval.py --pred ./outputs/fr_en_test_predictions.pred --key ../data/fr_en/fr_en.slam.20190204.test.key
 ```
 #### en_es
 ```bash
 cd src
-python3 main.py --train ../data/en_es/en_es.slam.20190204.train --dev ../data/en_es/en_es.slam.20190204.dev --test ../data/en_es/en_es.slam.20190204.test --devpred ./en_es_dev_predictions.pred --testpred ./en_es_test_predictions.pred
-python3 ../baseline/eval.py --pred ./en_es_dev_predictions.pred --key ../data/en_es/en_es.slam.20190204.dev.key
-python3 ../baseline/eval.py --pred ./en_es_test_predictions.pred --key ../data/en_es/en_es.slam.20190204.test.key
+
+python3 main.py --language en_es
+
+python3 ../baseline/eval.py --pred ./outputs/en_es_dev_predictions.pred --key ../data/en_es/en_es.slam.20190204.dev.key
+
+python3 ../baseline/eval.py --pred ./outputs/en_es_test_predictions.pred --key ../data/en_es/en_es.slam.20190204.test.key
 ```
 ---
 

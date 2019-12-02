@@ -3,4 +3,5 @@ data/fr_en
 data/en_es
 **/__pycache__/
 *.pred
+**/outputs/
 **/foo.py
