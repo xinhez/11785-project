@@ -21,7 +21,7 @@ class LogisticRegressionInstance(namedtuple('Instance', ['features', 'label', 'n
             raise TypeError('LogisticRegressionInstance features must be a dict.')
         return super(LogisticRegressionInstance, cls).__new__(cls, features, label, name)
 
-def get_dataloader(feats, labels):
+def get_dataloader(feats, lang, labels=None):
     try:
         dataloader =  [LogisticRegressionInstance(
             features=instance_data.to_features(),

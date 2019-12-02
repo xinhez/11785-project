@@ -7,14 +7,17 @@ import numpy as np
 from future.builtins import range
 from future.utils import iteritems
 
-from datautils import load_data, Lang
+from datautils.datautils import load_data, Lang
 from models.LogisticRegression import get_dataloader, Model
 
-# from datautils import load_data, Lang
+# from datautils.datautils import load_data, Lang
 # from models.Perceptron import get_dataloader, Model
 
-# from sequenceDatautils import load_data, Lang
+# from datautils.sequenceDatautils import load_data, Lang
 # from models.Seq2seq import get_dataloader, Model
+
+# from datautils.attentionDatautils import load_data, Lang
+# from models.Attention import get_dataloader, Model
 
 
 def main():
@@ -52,7 +55,7 @@ def main():
 
     print('Begin Data Loading')
     start_time = time.time()
-    training_data, training_labels = load_data(train_path, lang, dbg)
+    training_data, training_labels = load_data(train_path, lang, dbg=dbg)
     dev_data  = load_data(dev_path,  lang)
     test_data = load_data(test_path, lang)
     end_time = time.time()
@@ -62,19 +65,19 @@ def main():
     model = Model(lang)
 
     print('Begin Training')
-    train_loader = get_dataloader(training_data, training_labels, lang)
+    train_loader = get_dataloader(training_data, lang, training_labels)
     model.train(train_loader, epochs)
 
     # ============================== Inference ==============================
     print('Begin Inference-Dev')
-    dev_loader = get_dataloader(dev_data, np.zeros(len(dev_data)), lang)
+    dev_loader = get_dataloader(dev_data, lang)
     predictions = model.predict_for_set(dev_loader)
     with open(args.outputs_path + '%s_dev_predictions.pred' % args.language, 'wt') as f:
         for instance_id, prediction in iteritems(predictions):
             f.write(instance_id + ' ' + str(prediction) + '\n')
     
     print('Begin Inference-Test')
-    test_loader = get_dataloader(test_data, np.zeros(len(test_data)), lang)
+    test_loader = get_dataloader(test_data, lang)
     predictions = model.predict_for_set(test_loader)
     with open(args.outputs_path + '%s_test_predictions.pred' % args.language, 'wt') as f:
         for instance_id, prediction in iteritems(predictions):
