@@ -17,15 +17,16 @@ class SLAMDataset(Dataset):
         return len(self.data)
       
     def __getitem__(self, ind):
+        u = self.lang.getUserIndex(self.data[ind]['user'])
         x = torch.LongTensor([self.lang.getIndex(token) for token in self.data[ind]['token']])
         if self.labels == None:
             y = [instance_id for instance_id in self.data[ind]['instance_id']]
         else:
             y = torch.LongTensor(self.labels[ind])
-        return x, y
+        return x, y, u
   
 def _collate(seq_list):
-    return [s[0] for s in seq_list], [s[1] for s in seq_list]
+    return [s[0] for s in seq_list], [s[1] for s in seq_list], [s[2] for s in seq_list]
 
 # maximum prompt length 7
 def get_dataloader(feats, lang, labels=None):
@@ -56,31 +57,34 @@ class Decoder(nn.Module):
         return output, hidden
 
 class Grader(nn.Module):
-    def __init__(self, input_size):
+    def __init__(self, embed_size, user_size):
         super(Grader, self).__init__()
         hidden = 1024
-        self.layer1 = nn.Linear(input_size, hidden)
+        self.user_embedding = nn.Embedding(user_size, embed_size)
+        self.layer1 = nn.Linear(embed_size*2, hidden)
         self.layer2 = nn.Linear(hidden, hidden)
         self.layer3 = nn.Linear(hidden, hidden)
-        self.grade = nn.Linear(input_size, 2)
+        self.grade = nn.Linear(hidden, 2)
 
-    def forward(self, outputs):
-        # outputs = self.layer1(outputs)
-        # outputs = self.layer2(outputs)
-        # outputs = self.layer3(outputs)
+    def forward(self, outputs, users):
+        users = self.user_embedding(users)
+        outputs = torch.cat([outputs, users], dim=1)
+        outputs = self.layer1(outputs)
+        outputs = self.layer2(outputs)
+        outputs = self.layer3(outputs)
         return self.grade(outputs)
 
 class Seq2seq(nn.Module):
-    def __init__(self, vocab_size, embed_size, hidden_size):
+    def __init__(self, vocab_size, user_size, embed_size, hidden_size):
         super(Seq2seq, self).__init__()
         self.vocab_size = vocab_size
         self.embed_size = embed_size
         self.embedding = nn.Embedding(vocab_size, embed_size)
         self.encoder = Encoder(embed_size, hidden_size)
         self.decoder = Decoder(hidden_size, embed_size)
-        self.grader = Grader(embed_size)
+        self.grader = Grader(embed_size, user_size)
 
-    def forward(self, x, x_len):
+    def forward(self, x, x_len, users):
         device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
         x = self.embedding(x) # shape (batch_size, seq_length) -> (batch_size, seq_length, embed_size)
@@ -99,7 +103,7 @@ class Seq2seq(nn.Module):
         outputs = torch.zeros(seq_length, batch_size, 2).to(device)
         for t in range(seq_length):
             decoder_output, decoder_state = self.decoder(decoder_input, decoder_state)
-            outputs[t] = self.grader(decoder_output.squeeze(1))
+            outputs[t] = self.grader(decoder_output.squeeze(1), users)
             decoder_input = decoder_output
             
         outputs = outputs.transpose(0, 1) # (batch_size, seq_length, 2)
@@ -115,7 +119,7 @@ class Model:
     def __init__(self, lang):
         embed_size = 512
         hidden_size = 512
-        self.model = Seq2seq(lang.num_words, embed_size, hidden_size)
+        self.model = Seq2seq(lang.num_words, lang.num_users, embed_size, hidden_size)
         self.optimizer = torch.optim.Adam(self.model.parameters())
         self.criterion = nn.CrossEntropyLoss(ignore_index=2)
 
@@ -126,7 +130,7 @@ class Model:
             'epoch': epoch,
             'model_state_dict': self.model.state_dict(),
             'optimizer_state_dict': self.optimizer.state_dict()
-        }, save_dir + 'seq2seq_%d' % epoch)
+        }, save_dir + 'seq2seq_usergrading_%d' % epoch)
 
     def load_model(self, path):
         checkpoint = torch.load(path)
@@ -144,13 +148,14 @@ class Model:
         for epoch in range(epochs):
             losses = []
             start_time = time.time()
-            for (data, labels) in dataloader:
+            for (data, labels, users) in dataloader:
                 self.optimizer.zero_grad()
 
                 x_len = torch.LongTensor([len(seq) for seq in data]).to(device)
                 x = nn.utils.rnn.pad_sequence(data, batch_first=True).to(device)
+                users = torch.LongTensor(users).to(device)
 
-                outputs = self.model(x, x_len).contiguous().view(-1, 2) # (batch_size * seq_length, 2)
+                outputs = self.model(x, x_len, users).contiguous().view(-1, 2) # (batch_size * seq_length, 2)
                 labels = nn.utils.rnn.pad_sequence(labels, batch_first=True, padding_value=2).view(-1).to(device)
                 loss = self.criterion(outputs, labels)
                 losses.append(loss.item())
@@ -173,11 +178,12 @@ class Model:
 
         predictions = dict()
         with torch.no_grad():
-            for (data, instance_ids) in dataloader:
+            for (data, instance_ids, users) in dataloader:
                 x_len = torch.LongTensor([len(seq) for seq in data]).to(device)
                 x = nn.utils.rnn.pad_sequence(data, batch_first=True).to(device)
+                users = torch.LongTensor(users).to(device)
 
-                outputs = F.softmax(self.model(x, x_len), dim=2)[:, :, 1] # (batch_size, seq_length, 2)
+                outputs = F.softmax(self.model(x, x_len, users), dim=2)[:, :, 1] # (batch_size, seq_length, 2)
                 for batch_num in range(outputs.size(0)):
                     seq_length = x_len[batch_num]
                     for i in range(seq_length):

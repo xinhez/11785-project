@@ -41,8 +41,9 @@ class Encoder(nn.Module):
 
     def forward(self, x, x_len):
         x = nn.utils.rnn.pack_padded_sequence(x, x_len, batch_first=True, enforce_sorted=False)
-        _, state = self.rnn(x)
-        return state
+        output, state = self.rnn(x)
+        output, _ = nn.utils.rnn.pad_packed_sequence(output, batch_first=True)
+        return output, state
 
 class Decoder(nn.Module):
     def __init__(self, hidden_size, embed_size):
@@ -50,7 +51,7 @@ class Decoder(nn.Module):
         self.rnn = nn.RNN(embed_size, hidden_size, num_layers=4, batch_first=True, bidirectional=True)
         self.out = nn.Linear(hidden_size*2, embed_size)
 
-    def forward(self, input, hidden):
+    def forward(self, input, hidden, encoder_output):
         output, hidden = self.rnn(input, hidden)
         output = self.out(output)
         return output, hidden
@@ -62,12 +63,12 @@ class Grader(nn.Module):
         self.layer1 = nn.Linear(input_size, hidden)
         self.layer2 = nn.Linear(hidden, hidden)
         self.layer3 = nn.Linear(hidden, hidden)
-        self.grade = nn.Linear(input_size, 2)
+        self.grade = nn.Linear(hidden, 2)
 
     def forward(self, outputs):
-        # outputs = self.layer1(outputs)
-        # outputs = self.layer2(outputs)
-        # outputs = self.layer3(outputs)
+        outputs = self.layer1(outputs)
+        outputs = self.layer2(outputs)
+        outputs = self.layer3(outputs)
         return self.grade(outputs)
 
 class Seq2seq(nn.Module):
@@ -89,7 +90,7 @@ class Seq2seq(nn.Module):
 
         #######################################################################
         # Encoder
-        encoder_state = self.encoder(x, x_len)
+        encoder_output, encoder_state = self.encoder(x, x_len)
         
         #######################################################################
         # Decoder
@@ -98,7 +99,7 @@ class Seq2seq(nn.Module):
 
         outputs = torch.zeros(seq_length, batch_size, 2).to(device)
         for t in range(seq_length):
-            decoder_output, decoder_state = self.decoder(decoder_input, decoder_state)
+            decoder_output, decoder_state = self.decoder(decoder_input, decoder_state, encoder_output)
             outputs[t] = self.grader(decoder_output.squeeze(1))
             decoder_input = decoder_output
             
@@ -126,7 +127,7 @@ class Model:
             'epoch': epoch,
             'model_state_dict': self.model.state_dict(),
             'optimizer_state_dict': self.optimizer.state_dict()
-        }, save_dir + 'seq2seq_%d' % epoch)
+        }, save_dir + 'seq2seq_mlp_%d' % epoch)
 
     def load_model(self, path):
         checkpoint = torch.load(path)

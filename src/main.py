@@ -7,18 +7,21 @@ import numpy as np
 from future.builtins import range
 from future.utils import iteritems
 
+from lang import Lang
+
 # from datautils.datautils import load_data, Lang
 # from models.LogisticRegression import get_dataloader, Model
-
-# from datautils.datautils import load_data, Lang
 # from models.Perceptron import get_dataloader, Model
 
-# from datautils.seqDatautils import load_data, Lang
+from datautils.seqDatautils import load_data
 # from models.RNN import get_dataloader, Model
+# from models.Seq2seq import get_dataloader, Model
+# from models.Seq2seq_MLP import get_dataloader, Model
+# from models.Seq2seq_Grader import get_dataloader, Model
+from models.Attention import get_dataloader, Model
 
-from datautils.seqDatautils import load_data, Lang
-from models.Seq2seq import get_dataloader, Model
-
+def get_users(data):
+    return set([exercise['user'] for exercise in data])
 
 def main():
     """
@@ -47,19 +50,23 @@ def main():
     if not os.path.isdir(args.outputs_path): os.mkdir(args.outputs_path)
 
     # ============================== Hyper Parameter ==============================
-    dbg = False
-    # from_path = './saved_model/rnn_nomask5'
+    dbg = True
     from_path = None
-    epochs = 20
+    # from_path = './saved_model/seq2seq_nomlp_20'
+    # from_path = './saved_model/seq2seq_usergrading_10'
+    # from_path = './saved_model/attention_v2_20'
+    epochs = 5 if dbg else 20
     lang = Lang()
 
     # ============================== Data Loading ==============================
 
     print('Begin Data Loading')
     start_time = time.time()
-    training_data, training_labels = load_data(train_path, lang, dbg=dbg)
-    dev_data  = load_data(dev_path,  lang)
-    test_data = load_data(test_path, lang)
+    training_data, training_labels = load_data(train_path, lang, dbg=dbg, use_all_features=True)
+    dev_data  = load_data(dev_path,  lang, use_all_features=True)
+    test_data = load_data(test_path, lang, use_all_features=True)
+    users = list(get_users(training_data).union(get_users(dev_data)).union(get_users(test_data)))
+    lang.addUsers(users)
     end_time = time.time()
     print('Data Loaded\t Time Taken %0.2fm' % ((end_time - start_time)/60))
 

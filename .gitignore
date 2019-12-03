@@ -1,7 +1,8 @@
 data/es_en
 data/fr_en
 data/en_es
-**/__pycache__/
 *.pred
+**/foo.*
 **/outputs/
-**/foo.py
+**/__pycache__/
+**/saved_model/
