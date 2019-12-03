@@ -13,6 +13,9 @@ from future.utils import iteritems
 # from datautils.datautils import load_data, Lang
 # from models.Perceptron import get_dataloader, Model
 
+# from datautils.seqDatautils import load_data, Lang
+# from models.RNN import get_dataloader, Model
+
 from datautils.seqDatautils import load_data, Lang
 from models.Seq2seq import get_dataloader, Model
 
@@ -44,9 +47,10 @@ def main():
     if not os.path.isdir(args.outputs_path): os.mkdir(args.outputs_path)
 
     # ============================== Hyper Parameter ==============================
-    dbg = True
+    dbg = False
+    # from_path = './saved_model/rnn_nomask5'
     from_path = None
-    epochs = 10 if dbg else 10
+    epochs = 20
     lang = Lang()
 
     # ============================== Data Loading ==============================
@@ -59,23 +63,24 @@ def main():
     end_time = time.time()
     print('Data Loaded\t Time Taken %0.2fm' % ((end_time - start_time)/60))
 
-    # ============================== Training ==============================
     model = Model(lang)
 
-    print('Begin Training')
-    train_loader = get_dataloader(training_data, lang, training_labels)
-    model.train(train_loader, epochs)
+    # ============================== Training ==============================
+    if from_path == None:
+        print('Begin Training')
+        train_loader = get_dataloader(training_data, lang, training_labels)
+        model.train(train_loader, epochs)
 
     # ============================== Inference ==============================
-    print('Begin Inference-Dev', end=' ')
-    start_time = time.time()
-    dev_loader = get_dataloader(dev_data, lang)
-    predictions = model.predict_for_set(dev_loader, from_path)
-    with open(args.outputs_path + '%s_dev_predictions.pred' % args.language, 'wt') as f:
-        for instance_id, prediction in iteritems(predictions):
-            f.write(instance_id + ' ' + str(prediction) + '\n')
-    end_time = time.time()
-    print('| %0.2fm' % ((end_time-start_time)/60))
+    # print('Begin Inference-Dev', end=' ')
+    # start_time = time.time()
+    # dev_loader = get_dataloader(dev_data, lang)
+    # predictions = model.predict_for_set(dev_loader, from_path)
+    # with open(args.outputs_path + '%s_dev_predictions.pred' % args.language, 'wt') as f:
+    #     for instance_id, prediction in iteritems(predictions):
+    #         f.write(instance_id + ' ' + str(prediction) + '\n')
+    # end_time = time.time()
+    # print('| %0.2fm' % ((end_time-start_time)/60))
     
     print('Begin Inference-Test', end=' ')
     start_time = time.time()
