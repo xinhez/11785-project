@@ -1,7 +1,7 @@
 class Lang:
     def __init__(self):
-        self.word2index = {}
-        self.word2count = {}
+        self.word2index = {'-padding-': 0}
+        self.word2count = {'-padding-': 0}
         self.index2word = {0: '-padding-'}
         self.num_words = 1
 
