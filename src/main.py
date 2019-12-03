@@ -4,24 +4,22 @@ import os
 import time
 import numpy as np
 
-from future.builtins import range
-from future.utils import iteritems
-
 from lang import Lang
 
 # from datautils.datautils import load_data, Lang
 # from models.LogisticRegression import get_dataloader, Model
 # from models.Perceptron import get_dataloader, Model
 
-# from datautils.seqDatautils import load_data
+from datautils.seqDatautils import load_data
 # from models.RNN import get_dataloader, Model
 # from models.Seq2seq import get_dataloader, Model
 # from models.Seq2seq_MLP import get_dataloader, Model
 # from models.Seq2seq_Grader import get_dataloader, Model
 # from models.Attention import get_dataloader, Model
+from models.Seq2seq_Exp import get_dataloader, Model
 
-from datautils.convDatautils import load_data
-from models.CNN import get_dataloader, Model
+# from datautils.convDatautils import load_data
+# from models.CNN import get_dataloader, Model
 
 def get_users(data):
     return set([exercise['user'] for exercise in data])
@@ -53,12 +51,14 @@ def main():
     if not os.path.isdir(args.outputs_path): os.mkdir(args.outputs_path)
 
     # ============================== Hyper Parameter ==============================
-    dbg = False
+    dbg = True
     from_path = None
     # from_path = './saved_model/seq2seq_nomlp_20'
     # from_path = './saved_model/seq2seq_usergrading_10'
     # from_path = './saved_model/attention_v2_20'
-    epochs = 5 if dbg else 20
+    # from_path = './saved_model/cnn_3'
+    # from_path = './saved_model/seq2seq_10'
+    epochs = 10 if dbg else 20
     lang = Lang()
 
     # ============================== Data Loading ==============================
@@ -97,7 +97,7 @@ def main():
     test_loader = get_dataloader(test_data, lang)
     predictions = model.predict_for_set(test_loader, from_path)
     with open(args.outputs_path + '%s_test_predictions.pred' % args.language, 'wt') as f:
-        for instance_id, prediction in iteritems(predictions):
+        for instance_id, prediction in predictions.items():
             f.write(instance_id + ' ' + str(prediction) + '\n')
     end_time = time.time()
     print('| %0.2fm' % ((end_time-start_time)/60))

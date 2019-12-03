@@ -71,6 +71,13 @@ Given a history of token-level errors made by the learner in the learning langua
 | 1     | 0.651    | 0.751      | 0.552 | 0.240 |
 | 2     | 0.788    | 0.538      | 0.521 | 0.111 |
 
+#### CNN
+| Epoch | accuracy | avglogloss | auroc | F1    |
+| ---   | ---      | ---        | ---   | ---   |
+| 1     | 0.837    | 0.425      | 0.654 | 0.094 |
+| 2     | 0.830    | 0.439      | 0.636 | 0.117 |
+| 3     | 0.830    | 0.438      | 0.638 | 0.114 |
+
 ---
 
 ## Example Command

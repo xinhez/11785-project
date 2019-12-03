@@ -33,7 +33,7 @@ def _collate(seq_list):
 # maximum prompt length 7
 def get_dataloader(feats, lang, labels=None):
     dataset = SLAMDataset(feats, labels, lang)
-    dataloader = DataLoader(dataset, shuffle=(labels != None), batch_size=256, num_workers=4, collate_fn=_collate)
+    dataloader = DataLoader(dataset, shuffle=(labels != None), batch_size=128, num_workers=2, collate_fn=_collate)
     return dataloader
 
 class CNN(nn.Module):
@@ -44,18 +44,19 @@ class CNN(nn.Module):
         self.dropout = nn.Dropout(dropout)
 
         self.conv1 = nn.Conv1d(num_feats, hidden_size, 1, bias=False)
-        self.conv2 = nn.Conv1d(hidden_size, 1, 1, bias=False)
-        self.out = nn.Linear(embed_size, 2)
+        self.out = nn.Linear(hidden_size, 2)
 
     def forward(self, x):
         # x: [token, last_token, user]
         tokens = self.vocab_embedding(x[:, :2])
         users = self.user_embedding(x[:, 2]).unsqueeze(1)
         x = torch.cat([tokens, users], dim=1)
+
         x = self.conv1(x)
         x = self.dropout(x)
-        x = self.conv2(x)
-        x = self.out(x).squeeze(1)
+        
+        x = F.avg_pool1d(x, x.size(2)).squeeze(2)
+        x = self.out(x)
         return x
 
 class Model:

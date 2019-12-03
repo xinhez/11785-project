@@ -5,9 +5,6 @@ from io import open
 import math
 import os
 
-from future.builtins import range
-from future.utils import iterkeys, iteritems
-
 
 def main():
     """
@@ -34,7 +31,7 @@ def main():
     actual = []
     predicted = []
 
-    for instance_id in iterkeys(labels):
+    for instance_id in labels.keys():
         try:
             actual.append(labels[instance_id])
             predicted.append(predictions[instance_id])
@@ -42,7 +39,7 @@ def main():
             print('No prediction for instance ID ' + instance_id + '!')
 
     metrics = evaluate_metrics(actual, predicted)
-    line = '\t'.join([('%s=%.3f' % (metric, value)) for (metric, value) in iteritems(metrics)])
+    line = '\t'.join([('%s=%.3f' % (metric, value)) for (metric, value) in metrics.items()])
     print('Metrics:\t' + line)
 
 
@@ -185,7 +182,7 @@ def test_metrics():
     actual = [1, 0, 0, 1, 1, 0, 0, 1, 0, 1]
     predicted = [0.8, 0.2, 0.6, 0.3, 0.1, 0.2, 0.3, 0.9, 0.2, 0.7]
     metrics = evaluate_metrics(actual, predicted)
-    metrics = {key: round(metrics[key], 3) for key in iterkeys(metrics)}
+    metrics = {key: round(metrics[key], 3) for key in metrics.keys()}
     assert metrics['accuracy'] == 0.700
     assert metrics['avglogloss'] == 0.613
     assert metrics['auroc'] == 0.740
