@@ -79,7 +79,7 @@ class Model:
             print('Processing Time: %0.2f min' % ((end_time - start_time)/60),end='\t')
             print('Training Loss: ', running_loss)
 
-    def predict_for_set(self, dataloader):
+    def predict_for_set(self, dataloader, from_path=None):
         device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
         self.model.eval()
         self.model.to(device)

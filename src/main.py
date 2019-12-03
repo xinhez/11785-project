@@ -13,11 +13,8 @@ from future.utils import iteritems
 # from datautils.datautils import load_data, Lang
 # from models.Perceptron import get_dataloader, Model
 
-# from datautils.sequenceDatautils import load_data, Lang
-# from models.Seq2seq import get_dataloader, Model
-
-from datautils.attentionDatautils import load_data, Lang
-from models.Attention import get_dataloader, Model
+from datautils.seqDatautils import load_data, Lang
+from models.Seq2seq import get_dataloader, Model
 
 
 def main():
@@ -48,7 +45,8 @@ def main():
 
     # ============================== Hyper Parameter ==============================
     dbg = True
-    epochs = 1 if dbg else 10
+    from_path = None
+    epochs = 10 if dbg else 10
     lang = Lang()
 
     # ============================== Data Loading ==============================
@@ -69,19 +67,25 @@ def main():
     model.train(train_loader, epochs)
 
     # ============================== Inference ==============================
-    print('Begin Inference-Dev')
+    print('Begin Inference-Dev', end=' ')
+    start_time = time.time()
     dev_loader = get_dataloader(dev_data, lang)
-    predictions = model.predict_for_set(dev_loader)
+    predictions = model.predict_for_set(dev_loader, from_path)
     with open(args.outputs_path + '%s_dev_predictions.pred' % args.language, 'wt') as f:
         for instance_id, prediction in iteritems(predictions):
             f.write(instance_id + ' ' + str(prediction) + '\n')
+    end_time = time.time()
+    print('| %0.2fm' % ((end_time-start_time)/60))
     
-    print('Begin Inference-Test')
+    print('Begin Inference-Test', end=' ')
+    start_time = time.time()
     test_loader = get_dataloader(test_data, lang)
-    predictions = model.predict_for_set(test_loader)
+    predictions = model.predict_for_set(test_loader, from_path)
     with open(args.outputs_path + '%s_test_predictions.pred' % args.language, 'wt') as f:
         for instance_id, prediction in iteritems(predictions):
             f.write(instance_id + ' ' + str(prediction) + '\n')
+    end_time = time.time()
+    print('| %0.2fm' % ((end_time-start_time)/60))
 
 if __name__ == '__main__':
     main()

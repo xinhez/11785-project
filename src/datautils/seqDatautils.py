@@ -2,8 +2,8 @@ class Lang:
     def __init__(self):
         self.word2index = {}
         self.word2count = {}
-        self.index2word = {}
-        self.num_words = 0
+        self.index2word = {0: '-padding-'}
+        self.num_words = 1
 
     def addWord(self, word):
         if word in self.word2index:
@@ -22,8 +22,8 @@ class Lang:
 def new_exercise(use_all_features=False):
     exercise = dict()
     exercise['token'] = []
+    exercise['instance_id'] = []
     if use_all_features:
-        exercise['instance_id'] = []
         exercise['part_of_speech'] = []
         exercise['morphological_features'] = []
         exercise['dependency_label'] = []
@@ -69,7 +69,7 @@ def load_data(filename, lang, dbg=False, use_all_features=False):
                 labels.append(label)
                 if dbg:
                     dbg_count += 1
-                    if dbg_count > 1000:
+                    if dbg_count > 10000:
                         break
                 exercise = new_exercise(use_all_features)
                 label = []
@@ -107,12 +107,12 @@ def load_data(filename, lang, dbg=False, use_all_features=False):
                 # add the work to word2vec dictionary
                 lang.addWord(line[1])
 
+                exercise['instance_id'].append(line[0])
                 exercise['token'].append(line[1])
                 if training:
                    label.append(float(line[6]))
 
                 if use_all_features:
-                    exercise['instance_id'].append(line[0])
                     exercise['part_of_speech'].append(line[2])
                     morphological_features = dict()
                     for l in line[3].split('|'):

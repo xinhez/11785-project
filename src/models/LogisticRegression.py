@@ -84,5 +84,5 @@ class Model(object):
                 self.training_update(instance)
         print('\n')
 
-    def predict_for_set(self, test_set):
+    def predict_for_set(self, test_set, from_path=None):
         return {instance.name: self.predict_instance(instance) for instance in test_set}
