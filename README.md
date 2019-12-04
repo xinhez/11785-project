@@ -21,6 +21,7 @@ Given a history of token-level errors made by the learner in the learning langua
 | [Logistic Regression](src/models/LogisticRegression.py) | 0.844 | 0.386 | 0.745 | 0.183 |
 | [Perceptron](src/models/Perceptron.py) | 0.839 | 0.437 | 0.608 | 0.000 |
 | [Seq2seq](src/models/Seq2seq.py) | 0.857 | 0.427 | 0.667 | 0.015 |
+| [Seq2seq_Exp](src/models/Seq2seq_Exp.py) | 0.842 | 0.400 | 0.735 | 0.267 |
 
 #### Seq2seq
 | Epoch | accuracy | avglogloss | auroc | F1    |
