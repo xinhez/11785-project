@@ -37,25 +37,21 @@ class RNN(nn.Module):
     def __init__(self, vocab_size, embed_size, hidden_size):
         super(RNN, self).__init__()
         self.embedding = nn.Embedding(vocab_size, embed_size)
-        self.rnn = nn.LSTM(embed_size, hidden_size, num_layers=1, batch_first=True)
+        self.rnn = nn.LSTM(embed_size, hidden_size, num_layers=4, batch_first=True, bidirectional=True)
         self.out = nn.Linear(hidden_size, 2)
 
     def forward(self, x, x_len):
-        seq_length = x.size(1)
         x = self.embedding(x)
         x = nn.utils.rnn.pack_padded_sequence(x, x_len, batch_first=True, enforce_sorted=False)
         output, _ = self.rnn(x)
         output, _ = nn.utils.rnn.pad_packed_sequence(output, batch_first=True)
         output = self.out(output)
-        for i in range(len(x_len)):
-            if x_len[i].item() < seq_length:
-                output[i, x_len[i].item():, :] = 0
         return output
 
 class Model:
     def __init__(self, lang):
         embed_size = 256
-        hidden_size = 64
+        hidden_size = 512
         self.model = RNN(lang.num_words, embed_size, hidden_size)
         self.optimizer = torch.optim.Adam(self.model.parameters())
         self.criterion = nn.CrossEntropyLoss(ignore_index=2)

@@ -38,7 +38,7 @@ class Encoder(nn.Module):
     def __init__(self, embed_size, hidden_size):
         super(Encoder, self).__init__()
         self.hidden_size = hidden_size 
-        self.rnn = nn.RNN(embed_size, self.hidden_size, num_layers=4, batch_first=True, bidirectional=True)
+        self.rnn = nn.LSTM(embed_size, self.hidden_size, num_layers=4, batch_first=True, bidirectional=True, dropout=0.2)
 
     def forward(self, x, x_len):
         x = nn.utils.rnn.pack_padded_sequence(x, x_len, batch_first=True, enforce_sorted=False)
@@ -48,13 +48,28 @@ class Encoder(nn.Module):
 class Decoder(nn.Module):
     def __init__(self, hidden_size, embed_size):
         super(Decoder, self).__init__()
-        self.rnn = nn.RNN(embed_size, hidden_size, num_layers=4, batch_first=True, bidirectional=True)
+        self.rnn = nn.LSTM(embed_size, hidden_size, num_layers=4, batch_first=True, bidirectional=True, dropout=0.2)
         self.out = nn.Linear(hidden_size*2, embed_size)
 
     def forward(self, input, hidden):
         output, hidden = self.rnn(input, hidden)
         output = self.out(output)
         return output, hidden
+
+class Grader(nn.Module):
+    def __init__(self, input_size):
+        super(Grader, self).__init__()
+        hidden = 1024
+        self.layer1 = nn.Linear(input_size, hidden)
+        self.layer2 = nn.Linear(hidden, hidden)
+        self.layer3 = nn.Linear(hidden, hidden)
+        self.grade = nn.Linear(input_size, 2)
+
+    def forward(self, outputs):
+        # outputs = self.layer1(outputs)
+        # outputs = self.layer2(outputs)
+        # outputs = self.layer3(outputs)
+        return self.grade(outputs)
 
 class Seq2seq(nn.Module):
     def __init__(self, vocab_size, user_size, embed_size, hidden_size):
@@ -65,7 +80,8 @@ class Seq2seq(nn.Module):
         self.embedding = nn.Embedding(vocab_size, embed_size)
         self.encoder = Encoder(embed_size, hidden_size)
         self.decoder = Decoder(hidden_size, embed_size)
-        self.grader = nn.RNN(embed_size, 2, 3)
+        self.grader = Grader(embed_size)
+        self.rnn_grader = nn.LSTM(embed_size, 2, 3, dropout=0.2)
 
     def forward(self, x, x_len, users):
         device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
@@ -88,8 +104,13 @@ class Seq2seq(nn.Module):
         outputs = torch.zeros(seq_length, batch_size, 2).to(device)
         for t in range(seq_length):
             decoder_output, decoder_state = self.decoder(decoder_input, decoder_state)
-            grader_output, grader_state = self.grader(decoder_output*u, grader_state)
-            outputs[t] = grader_output.squeeze(1)
+            
+            # grader_output, grader_state = self.rnn_grader(decoder_output+u, grader_state)
+            # outputs[t] = grader_output.squeeze(1)
+
+            outputs[t] = self.grader((decoder_output+u).squeeze(1)) 
+            # outputs[t] = self.grader(decoder_output.squeeze(1)) 
+            
             decoder_input = decoder_output
             
         outputs = outputs.transpose(0, 1) # (batch_size, seq_length, 2)
@@ -116,7 +137,7 @@ class Model:
             'epoch': epoch,
             'model_state_dict': self.model.state_dict(),
             'optimizer_state_dict': self.optimizer.state_dict()
-        }, save_dir + 'seq2seq_%d' % epoch)
+        }, save_dir + 'seq2seq_exp_%d' % epoch)
 
     def load_model(self, path):
         checkpoint = torch.load(path)

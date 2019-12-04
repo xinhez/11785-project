@@ -11,12 +11,12 @@ from lang import Lang
 # from models.Perceptron import get_dataloader, Model
 
 from datautils.seqDatautils import load_data
-# from models.RNN import get_dataloader, Model
+from models.RNN import get_dataloader, Model
 # from models.Seq2seq import get_dataloader, Model
 # from models.Seq2seq_MLP import get_dataloader, Model
 # from models.Seq2seq_Grader import get_dataloader, Model
 # from models.Attention import get_dataloader, Model
-from models.Seq2seq_Exp import get_dataloader, Model
+# from models.Seq2seq_Exp import get_dataloader, Model
 
 # from datautils.convDatautils import load_data
 # from models.CNN import get_dataloader, Model
@@ -51,14 +51,14 @@ def main():
     if not os.path.isdir(args.outputs_path): os.mkdir(args.outputs_path)
 
     # ============================== Hyper Parameter ==============================
-    dbg = True
+    dbg = False
     from_path = None
     # from_path = './saved_model/seq2seq_nomlp_20'
-    # from_path = './saved_model/seq2seq_usergrading_10'
+    from_path = './saved_model/seq2seq_exp_11'
     # from_path = './saved_model/attention_v2_20'
     # from_path = './saved_model/cnn_3'
     # from_path = './saved_model/seq2seq_10'
-    epochs = 10 if dbg else 20
+    epochs = 50 if dbg else 20
     lang = Lang()
 
     # ============================== Data Loading ==============================
