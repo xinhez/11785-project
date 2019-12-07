@@ -12,6 +12,7 @@ from lang import Lang
 
 from datautils.seqDatautils import load_data
 from models.RNN import get_dataloader, Model
+from models.transformer import get_dataloader, Model
 # from models.Seq2seq import get_dataloader, Model
 # from models.Seq2seq_MLP import get_dataloader, Model
 # from models.Seq2seq_Grader import get_dataloader, Model
@@ -33,7 +34,7 @@ def main():
     """
 
     parser = argparse.ArgumentParser(description='Duolingo shared task baseline model')
-    parser.add_argument('--language', help='choose from [es_en, en_es, fr_en]', required=True)
+    parser.add_argument('--language', default='en_es', help='choose from [es_en, en_es, fr_en]', required=False)
     parser.add_argument('--dataset_path', default='../data/%s/', required=False)
     parser.add_argument('--outputs_path', default='./outputs/', required=False)
     args = parser.parse_args()
@@ -54,11 +55,12 @@ def main():
     dbg = False
     from_path = None
     # from_path = './saved_model/seq2seq_nomlp_20'
-    from_path = './saved_model/seq2seq_exp_11'
+    # from_path = './saved_model/seq2seq_exp_20'
     # from_path = './saved_model/attention_v2_20'
     # from_path = './saved_model/cnn_3'
     # from_path = './saved_model/seq2seq_10'
-    epochs = 50 if dbg else 20
+    from_path = './saved_model/transformer_1'
+    epochs = 10 if dbg else 0
     lang = Lang()
 
     # ============================== Data Loading ==============================
@@ -70,6 +72,7 @@ def main():
     test_data = load_data(test_path, lang, use_all_features=True)
     users = list(get_users(training_data).union(get_users(dev_data)).union(get_users(test_data)))
     lang.addUsers(users)
+    for i in range(len(lang.letters)): lang.letter2Index[lang.letters[i]] = i
     end_time = time.time()
     print('Data Loaded\t Time Taken %0.2fm' % ((end_time - start_time)/60))
 

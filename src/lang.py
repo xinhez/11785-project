@@ -3,12 +3,17 @@ class Lang:
         self.word2index = {'-padding-': 0}
         self.word2count = {'-padding-': 0}
         self.index2word = {0: '-padding-'}
+        self.letters = ['', '<sos>', '<eos>', ' ']
+        self.letter2Index = dict()
         self.num_words = 1
 
     def addWord(self, word):
         if word in self.word2index:
             self.word2count[word] += 1
         else:
+            for c in word:
+                if c not in self.letters:
+                    self.letters.append(c)
             self.word2index[word] = self.num_words
             self.word2count[word] = 1
             self.index2word[self.num_words] = word 
