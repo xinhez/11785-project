@@ -1,0 +1,58 @@
+w_rnn
+Accu: 0.853 | AUROC: 0.728 | F1: 0.181
+Epoch 1/10 | Loss 0.341036 | Time 3.75m
+Epoch 2/10 | Loss 0.334362 | Time 3.77m
+Epoch 3/10 | Loss 0.332489 | Time 3.76m
+Epoch 4/10 | Loss 0.331216 | Time 3.79m
+Epoch 5/10 | Loss 0.330424 | Time 3.78m
+Epoch 6/10 | Loss 0.329850 | Time 3.79m
+Epoch 7/10 | Loss 0.329347 | Time 3.77m
+Epoch 8/10 | Loss 0.328853 | Time 3.83m
+Epoch 9/10 | Loss 0.328549 | Time 3.78m
+Epoch 10/10 | Loss 0.328164 | Time 3.81m
+
+w_seq2seq
+Accu: 0.854 | AUROC: 0.730 | F1: 0.186
+Epoch 1/10 | Loss 0.343882 | Time 10.06m       
+Epoch 2/10 | Loss 0.335544 | Time 10.00m          
+Epoch 3/10 | Loss 0.333355 | Time 12.04m          
+Epoch 4/10 | Loss 0.332247 | Time 14.34m          
+Epoch 5/10 | Loss 0.331293 | Time 14.35m          
+Epoch 6/10 | Loss 0.330579 | Time 45.09m        
+Epoch 7/10 | Loss 0.330067 | Time 14.47m         
+Epoch 8/10 | Loss 0.329594 | Time 14.42m      
+Epoch 9/10 | Loss 0.329214 | Time 14.45m      
+Epoch 10/10 | Loss 0.329040 | Time 14.38m 
+
+w_seq2seq_attention 
+Accu: 0.853 | AUROC: 0.731 | F1: 0.181
+Epoch 1/10 | Loss 0.344348 | Time 11.91m
+Epoch 2/10 | Loss 0.336073 | Time 11.65m
+Epoch 3/10 | Loss 0.334006 | Time 11.58m
+Epoch 4/10 | Loss 0.332576 | Time 11.02m
+Epoch 5/10 | Loss 0.331806 | Time 11.03m
+Epoch 6/10 | Loss 0.331323 | Time 11.02m
+Epoch 7/10 | Loss 0.330813 | Time 11.00m
+Epoch 8/10 | Loss 0.330437 | Time 11.00m
+Epoch 9/10 | Loss 0.330430 | Time 11.03m
+Epoch 10/10 | Loss 0.329948 | Time 11.30m
+
+w_seq2seq_grading_with_user
+Epoch 1/10 | Loss 0.334097 | Time 8.68m
+Epoch 2/10 | Loss 0.319821 | Time 8.70m
+Epoch 3/10 | Loss 0.317218 | Time 8.71m
+Epoch 4/10 | Loss 0.315629 | Time 8.70m
+Epoch 5/10 | Loss 0.314559 | Time 8.68m
+Epoch 6/10 | Loss 0.313550 | Time 8.70m
+
+c_seq2seq
+Epoch 1/10 | Loss 0.348963 | Time 18.54m
+Epoch 2/10 | Loss 0.338513 | Time 19.20m
+Epoch 3/10 | Loss 0.337103 | Time 19.50m
+Epoch 4/10 | Loss 0.335085 | Time 18.93m
+Epoch 5/10 | Loss 0.334242 | Time 18.83m
+
+c_seq2seq_atention
+Epoch 1/10 | Loss 0.348321 | Time 21.73m
+Epoch 2/10 | Loss 0.338511 | Time 21.82m
+
