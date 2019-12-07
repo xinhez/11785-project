@@ -113,7 +113,7 @@ class Seq2seq(nn.Module):
 
 class Model:
     def __init__(self, lang):
-        embed_size = 512
+        embed_size = 256
         hidden_size = 512
         self.model = Seq2seq(lang.num_words, embed_size, hidden_size)
         self.optimizer = torch.optim.Adam(self.model.parameters())

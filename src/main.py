@@ -12,7 +12,7 @@ from lang import Lang
 
 from datautils.seqDatautils import load_data
 from models.RNN import get_dataloader, Model
-from models.transformer import get_dataloader, Model
+# from models.transformer import get_dataloader, Model
 # from models.Seq2seq import get_dataloader, Model
 # from models.Seq2seq_MLP import get_dataloader, Model
 # from models.Seq2seq_Grader import get_dataloader, Model
@@ -59,8 +59,8 @@ def main():
     # from_path = './saved_model/attention_v2_20'
     # from_path = './saved_model/cnn_3'
     # from_path = './saved_model/seq2seq_10'
-    from_path = './saved_model/transformer_1'
-    epochs = 10 if dbg else 0
+    # from_path = './saved_model/transformer_1'
+    epochs = 10 if dbg else 10
     lang = Lang()
 
     # ============================== Data Loading ==============================
