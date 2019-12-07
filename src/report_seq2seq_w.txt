@@ -37,6 +37,19 @@ Epoch 8/10 | Loss 0.330437 | Time 11.00m
 Epoch 9/10 | Loss 0.330430 | Time 11.03m
 Epoch 10/10 | Loss 0.329948 | Time 11.30m
 
+w_seq2seq_grading(mlp)
+Accu: 0.853 | AUROC: 0.729 | F1: 0.188
+Epoch 1/10 | Loss 0.344397 | Time 14.23m
+Epoch 2/10 | Loss 0.336171 | Time 14.21m
+Epoch 3/10 | Loss 0.334229 | Time 14.03m
+Epoch 4/10 | Loss 0.332778 | Time 14.27m
+Epoch 5/10 | Loss 0.331984 | Time 14.22m
+Epoch 6/10 | Loss 0.331245 | Time 14.24m
+Epoch 7/10 | Loss 0.330611 | Time 14.28m
+Epoch 8/10 | Loss 0.330212 | Time 14.19m
+Epoch 9/10 | Loss 0.329863 | Time 14.27m
+Epoch 10/10 | Loss 0.329513 | Time 14.15m
+
 w_seq2seq_grading_with_user
 Epoch 1/10 | Loss 0.334097 | Time 8.68m
 Epoch 2/10 | Loss 0.319821 | Time 8.70m
