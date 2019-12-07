@@ -13,7 +13,9 @@ from lang import Lang
 from datautils.seqDatautils import load_data
 # from models.RNN import get_dataloader, Model
 # from models.Seq2seq import get_dataloader, Model
-from models.Seq2seq_character import get_dataloader, Model
+# from models.Seq2seq_character import get_dataloader, Model
+# from models.Attention import get_dataloader, Model
+from models.Attention_character import get_dataloader, Model
 
 # from models.transformer import get_dataloader, Model
 # from models.Seq2seq import get_dataloader, Model
