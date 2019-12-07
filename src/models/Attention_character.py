@@ -192,7 +192,7 @@ class Model:
             'epoch': epoch,
             'model_state_dict': self.model.state_dict(),
             'optimizer_state_dict': self.optimizer.state_dict()
-        }, save_dir + 'seq2seq_%d' % epoch)
+        }, save_dir + 'attention_c_%d' % epoch)
 
     def load_model(self, path):
         checkpoint = torch.load(path)
@@ -226,6 +226,10 @@ class Model:
 
                 torch.nn.utils.clip_grad_norm_(self.model.parameters(), 1)
                 self.optimizer.step()
+
+                if (batch_num+1) % 1000 == 0:
+                    end_time=time.time()
+                    print("Batch %d | Time %0.2fm" % (batch_num+1, (end_time-start_time)/60))
                 torch.cuda.empty_cache()
 
             end_time = time.time()

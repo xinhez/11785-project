@@ -14,15 +14,9 @@ from datautils.seqDatautils import load_data
 # from models.RNN import get_dataloader, Model
 # from models.Seq2seq import get_dataloader, Model
 # from models.Seq2seq_character import get_dataloader, Model
+# from models.Seq2seq_grader_user import get_dataloader, Model
 # from models.Attention import get_dataloader, Model
 from models.Attention_character import get_dataloader, Model
-
-# from models.transformer import get_dataloader, Model
-# from models.Seq2seq import get_dataloader, Model
-# from models.Seq2seq_MLP import get_dataloader, Model
-# from models.Seq2seq_Grader import get_dataloader, Model
-# from models.Attention import get_dataloader, Model
-# from models.Seq2seq_Exp import get_dataloader, Model
 
 # from datautils.convDatautils import load_data
 # from models.CNN import get_dataloader, Model
