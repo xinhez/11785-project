@@ -11,7 +11,9 @@ from lang import Lang
 # from models.Perceptron import get_dataloader, Model
 
 from datautils.seqDatautils import load_data
-from models.RNN import get_dataloader, Model
+# from models.RNN import get_dataloader, Model
+from models.Seq2seq import get_dataloader, Model
+
 # from models.transformer import get_dataloader, Model
 # from models.Seq2seq import get_dataloader, Model
 # from models.Seq2seq_MLP import get_dataloader, Model
