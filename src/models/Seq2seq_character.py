@@ -6,6 +6,8 @@ import torch.nn as nn
 import torch.nn.functional as F
 from torch.utils.data import Dataset, DataLoader
 
+device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+
 class SLAMDataset(Dataset):
     def __init__(self, data, labels, lang):
         super().__init__()
@@ -17,20 +19,41 @@ class SLAMDataset(Dataset):
         return len(self.data)
       
     def __getitem__(self, ind):
-        x = torch.LongTensor([self.lang.getIndex(token) for token in self.data[ind]['token']])
-        if self.labels == None:
-            y = [instance_id for instance_id in self.data[ind]['instance_id']]
+        x = ' '.join(self.data[ind]['token'])
+        x = torch.LongTensor([self.lang.letter2Index['<sos>']]+[self.lang.letter2Index[c] for c in x]+[self.lang.letter2Index['<eos>']]) # array of index of character
+        if self.labels is None:
+            y = torch.zeros(len(self.data[ind]['token'])).long()
+            ids = [instance_id for instance_id in self.data[ind]['instance_id']]
+            return x, y, ids
         else:
             y = torch.LongTensor(self.labels[ind])
-        return x, y
+            return x, y
   
-def _collate(seq_list):
-    return [s[0] for s in seq_list], [s[1] for s in seq_list]
+def collate_train(seq_list):
+    token_input = torch.nn.utils.rnn.pad_sequence([s[0] for s in seq_list], batch_first=True) # (batch_size, seq_len)
+    token_len   = torch.LongTensor([len(s[0]) for s in seq_list])
+    label_input = torch.nn.utils.rnn.pad_sequence([s[1] for s in seq_list], batch_first=True, padding_value=2)
+    label_len   = torch.LongTensor([len(s[1]) for s in seq_list])
+    return token_input, token_len, label_input, label_len
+
+def collate_test(seq_list):
+    token_input = torch.nn.utils.rnn.pad_sequence([s[0] for s in seq_list], batch_first=True) # (seq_len, batch_size)
+    token_len   = torch.LongTensor([len(s[0]) for s in seq_list])
+    label_input = torch.nn.utils.rnn.pad_sequence([s[1] for s in seq_list], batch_first=True, padding_value=2) # (label_seq_len, batch_size)
+    label_len   = torch.LongTensor([len(s[1]) for s in seq_list])
+    ids = [s[2] for s in seq_list]
+    return token_input, token_len, label_input, label_len, ids
 
 # maximum prompt length 7
 def get_dataloader(feats, lang, labels=None):
+    batch_size = 2
     dataset = SLAMDataset(feats, labels, lang)
-    dataloader = DataLoader(dataset, shuffle=(labels != None), batch_size=256, num_workers=4, collate_fn=_collate)
+    print('dataset len', len(dataset))
+    if labels is None:
+        dataloader = DataLoader(dataset, shuffle=False, batch_size=batch_size, collate_fn=collate_test)
+    else:
+        dataloader = DataLoader(dataset, shuffle=True, batch_size=batch_size, collate_fn=collate_train)
+
     return dataloader
 
 class Encoder(nn.Module):
@@ -73,12 +96,9 @@ class Seq2seq(nn.Module):
         self.decoder = Decoder(hidden_size, embed_size)
         self.grader = Grader(embed_size)
 
-    def forward(self, x, x_len):
-        device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
-
+    def forward(self, x, x_len, seq_length):
         x = self.embedding(x) # shape (batch_size, seq_length) -> (batch_size, seq_length, embed_size)
         batch_size = x.size(0)
-        seq_length = x.size(1)
 
         #######################################################################
         # Encoder
@@ -97,11 +117,6 @@ class Seq2seq(nn.Module):
             
         outputs = outputs.transpose(0, 1) # (batch_size, seq_length, 2)
 
-        #######################################################################
-        # Mask the outputs by actual length
-        # for i in range(batch_size):
-        #     if x_len[i].item() < seq_length:
-        #         outputs[i, x_len[i].item():, :] = 0
         return outputs
 
 class Model:
@@ -130,21 +145,23 @@ class Model:
         self.model.to(device)
 
     def train(self, dataloader, epochs):
-        device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
         self.model.to(device)
         self.model.train()
         
         for epoch in range(epochs):
             losses = []
             start_time = time.time()
-            for (data, labels) in dataloader:
+            for (batch_num, collate_output) in enumerate(dataloader):
+                torch.cuda.empty_cache()
                 self.optimizer.zero_grad()
+                
+                token_input, token_len, label_input, label_len = collate_output
+                token_input = token_input.to(device)
+                token_len = token_len.to(device)
+                seq_len = label_input.size(1)
 
-                x_len = torch.LongTensor([len(seq) for seq in data]).to(device)
-                x = nn.utils.rnn.pad_sequence(data, batch_first=True).to(device)
-
-                outputs = self.model(x, x_len).contiguous().view(-1, 2) # (batch_size * seq_length, 2)
-                labels = nn.utils.rnn.pad_sequence(labels, batch_first=True, padding_value=2).view(-1).to(device)
+                outputs = self.model(token_input, token_len, seq_len).contiguous().view(-1, 2) # (batch_size * seq_length, 2)
+                labels = nn.utils.rnn.pad_sequence(label_input, batch_first=True, padding_value=2).view(-1).to(device)
                 loss = self.criterion(outputs, labels)
                 losses.append(loss.item())
                 loss.backward()
@@ -158,7 +175,6 @@ class Model:
             self.save_model(epoch+1)
 
     def predict_for_set(self, dataloader, from_path=None):
-        device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
         if from_path != None:
             self.load_model(from_path)
         self.model.to(device)

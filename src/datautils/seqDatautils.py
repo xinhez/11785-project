@@ -47,7 +47,7 @@ def load_data(filename, lang, dbg=False, use_all_features=False):
                 labels.append(label)
                 if dbg:
                     dbg_count += 1
-                    if dbg_count > 10000:
+                    if dbg_count > 1000:
                         break
                 exercise = new_exercise(use_all_features)
                 label = []
