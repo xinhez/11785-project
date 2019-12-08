@@ -19,7 +19,7 @@ class Lang:
             self.addWord(word)
         return self.word2index[word]
 
-def load_data(filename, lang, dbg=False):
+def load_data(filename, lang, dbg=False, use_all_features=False):
     """
     This method loads and returns the data in filename. If the data is labelled training data, it returns labels too.
 
