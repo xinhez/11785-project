@@ -51,6 +51,17 @@ Epoch 9/10 | Loss 0.329863 | Time 14.27m
 Epoch 10/10 | Loss 0.329513 | Time 14.15m
 
 w_seq2seq_user 
+Metrics:        accuracy=0.856  avglogloss=0.357auroc=0.777     F1=0.284
+Epoch 1/10 | Loss 0.329139 | Time 13.72m
+Epoch 2/10 | Loss 0.315696 | Time 15.09m
+Epoch 3/10 | Loss 0.313252 | Time 14.11m
+Epoch 4/10 | Loss 0.311923 | Time 14.21m
+Epoch 5/10 | Loss 0.310958 | Time 13.99m
+Epoch 6/10 | Loss 0.310236 | Time 14.21m
+Epoch 7/10 | Loss 0.309737 | Time 14.19m
+Epoch 8/10 | Loss 0.309221 | Time 13.78m
+Epoch 9/10 | Loss 0.308787 | Time 14.18m
+Epoch 10/10 | Loss 0.308518 | Time 14.04m
 
 w_seq2seq_grader_with_user
 Accu: 0.856	| auroc=0.776 | F1=0.298
