@@ -44,7 +44,7 @@ def collate_test(seq_list):
     label_input = torch.nn.utils.rnn.pad_sequence([s[1] for s in seq_list], batch_first=True, padding_value=2) # (label_seq_len, batch_size)
     label_len   = torch.LongTensor([len(s[1]) for s in seq_list])
     ids = [s[2] for s in seq_list]
-    users = [s[2] for s in seq_list]
+    users = [s[3] for s in seq_list]
     return token_input, token_len, label_input, label_len, ids, users
 
 # maximum prompt length 7

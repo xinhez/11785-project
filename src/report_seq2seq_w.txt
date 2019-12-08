@@ -101,20 +101,18 @@ Epoch 9/10 | Loss 0.334116 | Time 21.82m
 Epoch 10/10 | Loss 0.333756 | Time 21.80m
 
 c_seq2seq_user
+Metrics:	accuracy=0.857	avglogloss=0.354	auroc=0.780	F1=0.273
 Epoch 1/10 | Loss 0.334986 | Time 11.13m
 Epoch 2/10 | Loss 0.317016 | Time 11.15m
 Epoch 3/10 | Loss 0.314515 | Time 11.13m
 Epoch 4/10 | Loss 0.313365 | Time 11.11m
 Epoch 5/10 | Loss 0.312271 | Time 11.24m
+Epoch 6/10 | Loss 0.311469 | Time 11.11m
+Epoch 7/10 | Loss 0.310875 | Time 11.11m
+Epoch 8/10 | Loss 0.310513 | Time 11.12m
+Epoch 9/10 | Loss 0.310081 | Time 11.12m
+Epoch 10/10 | Loss 0.309803 | Time 11.15m
 
-  Deprecated
-    Epoch 1/10 | Loss 0.333491 | Time 18.69m
-    Epoch 2/10 | Loss 0.317841 | Time 18.67m
-    Epoch 3/10 | Loss 0.315748 | Time 18.65m
-    Epoch 4/10 | Loss 0.314216 | Time 18.70m
-    Epoch 5/10 | Loss 0.313412 | Time 19.43m
-    Epoch 6/10 | Loss 0.312687 | Time 18.77m
-    Epoch 7/10 | Loss 0.312028 | Time 18.58m
 
 c_seq2seq_grader_user
 Epoch 1/10 | Loss 0.338535 | Time 20.26m
@@ -123,3 +121,7 @@ Epoch 3/10 | Loss 0.319674 | Time 20.41m
 Epoch 4/10 | Loss 0.317921 | Time 20.42m
 Epoch 5/10 | Loss 0.317067 | Time 20.40m
 Epoch 6/10 | Loss 0.316126 | Time 20.40m
+Epoch 7/10 | Loss 0.315738 | Time 20.44m
+Epoch 8/10 | Loss 0.314864 | Time 20.38m
+Epoch 9/10 | Loss 0.314686 | Time 20.43m
+Epoch 10/10 | Loss 0.314265 | Time 20.43m
