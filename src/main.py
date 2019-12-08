@@ -14,9 +14,11 @@ from datautils.seqDatautils import load_data
 # from models.RNN import get_dataloader, Model
 # from models.Seq2seq import get_dataloader, Model
 # from models.Seq2seq_character import get_dataloader, Model
+from models.Seq2seq_character_grader import get_dataloader, Model
+# from models.Seq2seq_character_user import get_dataloader, Model
 # from models.Seq2seq_grader_user import get_dataloader, Model
 # from models.Attention import get_dataloader, Model
-from models.Attention_character import get_dataloader, Model
+# from models.Attention_character import get_dataloader, Model
 
 # from datautils.convDatautils import load_data
 # from models.CNN import get_dataloader, Model
@@ -57,7 +59,7 @@ def main():
     # from_path = './saved_model/seq2seq_exp_20'
     # from_path = './saved_model/attention_v2_20'
     # from_path = './saved_model/cnn_3'
-    # from_path = './saved_model/seq2seq_10'
+    # from_path = './saved_model/seq2seq_c_10'
     # from_path = './saved_model/transformer_1'
     epochs = 10 if dbg else 10
     lang = Lang()
