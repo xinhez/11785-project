@@ -51,12 +51,17 @@ Epoch 9/10 | Loss 0.329863 | Time 14.27m
 Epoch 10/10 | Loss 0.329513 | Time 14.15m
 
 w_seq2seq_grading_with_user
+Accu: 0.856	| auroc=0.776 | F1=0.298
 Epoch 1/10 | Loss 0.334097 | Time 8.68m
 Epoch 2/10 | Loss 0.319821 | Time 8.70m
 Epoch 3/10 | Loss 0.317218 | Time 8.71m
 Epoch 4/10 | Loss 0.315629 | Time 8.70m
 Epoch 5/10 | Loss 0.314559 | Time 8.68m
 Epoch 6/10 | Loss 0.313550 | Time 8.70m
+Epoch 7/10 | Loss 0.312705 | Time 8.68m
+Epoch 8/10 | Loss 0.312373 | Time 8.70m
+Epoch 9/10 | Loss 0.311893 | Time 8.69m
+Epoch 10/10 | Loss 0.311423 | Time 8.70m
 
 c_seq2seq
 Epoch 1/10 | Loss 0.348963 | Time 18.54m
@@ -64,8 +69,25 @@ Epoch 2/10 | Loss 0.338513 | Time 19.20m
 Epoch 3/10 | Loss 0.337103 | Time 19.50m
 Epoch 4/10 | Loss 0.335085 | Time 18.93m
 Epoch 5/10 | Loss 0.334242 | Time 18.83m
+Epoch 6/10 | Loss 0.333606 | Time 18.84m
+Epoch 7/10 | Loss 0.333012 | Time 18.83m
+Epoch 8/10 | Loss 0.332552 | Time 17.82m
+Epoch 9/10 | Loss 0.332199 | Time 16.64m
+Epoch 10/10 | Loss 0.331915 | Time 18.76m
 
 c_seq2seq_atention
 Epoch 1/10 | Loss 0.348321 | Time 21.73m
 Epoch 2/10 | Loss 0.338511 | Time 21.82m
+Epoch 3/10 | Loss 0.336632 | Time 21.83m
+Epoch 4/10 | Loss 0.335254 | Time 21.82m
+Epoch 5/10 | Loss 0.334893 | Time 21.84m
+Epoch 6/10 | Loss 0.334337 | Time 21.85m
+Epoch 7/10 | Loss 0.334045 | Time 21.83m
+Epoch 8/10 | Loss 0.333937 | Time 21.82m
+Epoch 9/10 | Loss 0.334116 | Time 21.82m
+Epoch 10/10 | Loss 0.333756 | Time 21.80m
 
+c_seq2seq_user
+Epoch 1/10 | Loss 0.333491 | Time 18.69m
+Epoch 2/10 | Loss 0.317841 | Time 18.67m
+Epoch 3/10 | Loss 0.315748 | Time 18.65m

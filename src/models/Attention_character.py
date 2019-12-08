@@ -244,15 +244,18 @@ class Model:
 
         predictions = dict()
         with torch.no_grad():
-            for (data, instance_ids) in dataloader:
-                x_len = torch.LongTensor([len(seq) for seq in data]).to(device)
-                x = nn.utils.rnn.pad_sequence(data, batch_first=True).to(device)
+            for (batch_num, collate_output) in enumerate(dataloader):
+                token_input, token_len, label_input, label_len, ids = collate_output
+                token_input = token_input.to(device)
+                token_len = token_len.to(device)
+                seq_len = label_input.size(1)
 
-                outputs = F.softmax(self.model(x, x_len), dim=2)[:, :, 1] # (batch_size, seq_length, 2)
+                outputs = F.softmax(self.model(token_input, token_len, seq_len), dim=2)[:, :, 1]
+
                 for batch_num in range(outputs.size(0)):
-                    seq_length = x_len[batch_num]
+                    seq_length = label_len[batch_num]
                     for i in range(seq_length):
-                        instance_id = instance_ids[batch_num][i]
+                        instance_id = ids[batch_num][i]
                         prediction = outputs[batch_num][i]
                         predictions[instance_id] = prediction.item()
         return predictions
