@@ -16,8 +16,9 @@ from datautils.seqDatautils import load_data
 # from models.Seq2seq_character import get_dataloader, Model
 # from models.Seq2seq_character_grader import get_dataloader, Model
 # from models.Seq2seq_character_user import get_dataloader, Model
+from models.Seq2seq_character_grader_user import get_dataloader, Model
 # from models.Seq2seq_grader_user import get_dataloader, Model
-from models.Seq2seq_user import get_dataloader, Model
+# from models.Seq2seq_user import get_dataloader, Model
 # from models.Attention import get_dataloader, Model
 # from models.Attention_character import get_dataloader, Model
 

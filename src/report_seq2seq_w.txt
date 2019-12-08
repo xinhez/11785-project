@@ -91,3 +91,5 @@ c_seq2seq_user
 Epoch 1/10 | Loss 0.333491 | Time 18.69m
 Epoch 2/10 | Loss 0.317841 | Time 18.67m
 Epoch 3/10 | Loss 0.315748 | Time 18.65m
+Epoch 4/10 | Loss 0.314216 | Time 18.70m
+Epoch 5/10 | Loss 0.313412 | Time 19.43m
